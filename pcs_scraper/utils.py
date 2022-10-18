@@ -10,6 +10,7 @@ def clean_calendar(df):
     df['Last_Date'] = df['Last_Date'].fillna(df['First_Date'])
     df['N_Stages'] = ((df['Last_Date'] - df['First_Date']).dt.days + 1)
     df['Race_Link'] = df['Link'].str.split('/').str[1]
+    df['Week_Number'] = df['Last Date'].dt.week
 
     return df
 
