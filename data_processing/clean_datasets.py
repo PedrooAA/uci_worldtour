@@ -1,12 +1,6 @@
 import pandas as pd
 import numpy as np
 
-sr_results = pd.read_csv('SR_Results.csv')
-gc_results = pd.read_csv('GC_Results.csv')
-odr_results = pd.read_csv('ODR_Results.csv')
-calendar = pd.read_csv('Cycling_Calendar.csv')
-team_roster = pd.read_csv('Cycling_TeamRosters.csv')
-
 
 def strip_rank(df_results):
     df_results['Rank'] = df_results['Rank'].str.strip()
@@ -14,6 +8,7 @@ def strip_rank(df_results):
 
 
 def join_calendar(df_results):
+    calendar = pd.read_csv('Cycling_Calendar.csv')
     calendar['Season'] = pd.to_numeric(calendar['Season'])
     df_results = strip_rank(df_results).merge(calendar.drop(['Link', 'First Date', 'Last Date',
                                                              'N_Stages', 'Date'], axis=1),
@@ -45,8 +40,10 @@ def clean_rank(df_results):
         pass
     return df_results
 
+
 def replace_nations(df_results):
     df_results = clean_rank(df_results)
+    team_roster = pd.read_csv('Cycling_TeamRosters.csv')
 
     team_roster = team_roster[['Season', 'Team_Name', 'Rider_Name', 'Week_Number_Start', 'Week_Number_End']]
     team_roster = team_roster.rename(columns={'Season': 'Season1', 'Team_Name': 'Team'})
@@ -70,6 +67,7 @@ def replace_nations(df_results):
 
 
 def rename_(df_results):
+    df_results = replace_nations(df_results)
     if df_results == odr_results:
         df_results.loc[(df_results["Class"] == 'NC') &
                        (df_results["Stage"] == 'Time trial'), ['Class']] = 'NC_ITT'
